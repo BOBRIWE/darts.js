@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Math.random test</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+    <canvas id="canvas">
+        Your browser doesn't support canvas!
+    </canvas>
+
+    <script src="js/darts.js"></script>
+
+    <script>
+        //        setInterval(render, 1000/30);
+        
+        
+        window.onresize = () => {
+            pause();
+        }
+
+        var canvas = document.getElementById("canvas");
+        var ctx = canvas.getContext("2d");
+        
+        var darts = new Darts(canvas);
+        
+        darts.test();
+        console.log(darts.canvas.width);
+
+        var hitCanvas = document.createElement("canvas");
+        var hitCtx = hitCanvas.getContext("2d");
+
+        function getMousePos(canvas, e) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: e.clientX - rect.left,
+                y: e.clientY - rect.top
+            };
+        }
+
+        var circle = {
+            x: canvas.clientWidth / 2,
+            y: canvas.clientHeight / 2,
+            moveTo: {
+                x: canvas.clientWidth / 2,
+                y: canvas.clientHeight / 2,
+                angle: 0
+            },
+            radius: 100,
+            countAngle: function() {
+                this.moveTo.angle = Math.acos((this.moveTo.x * this.moveTo.y + 0) / (Math.sqrt(this.moveTo.x * this.moveTo.x + this.moveTo.y * this.moveTo.y) * Math.sqrt(this.moveTo.x * this.moveTo.x + 1)));
+                //                console.log(this.moveTo.angle);
+            },
+            spacePress: false,
+            random: 15,
+            smallerRadius: function() {
+
+                this.random = 2;
+                this.radius = 20;
+
+            },
+            biggerRadius: function() {
+
+                this.random = 15;
+                this.radius = 100;
+
+            },
+            timer: 2000,
+            step: 0,
+            setTimer: function() {
+
+                this.timerStart = performance.now();
+
+            },
+            resetTimer: function() {
+                delete this.timerStart;
+                delete this.step;
+            }
+        };
+        var requestID;
+
+        //        canvas.onmousemove = function(e) {
+        //            mousePos = getMousePos(canvas, e);
+        //
+        //            circle.moveTo.x = mousePos.x;
+        //            circle.moveTo.y = mousePos.y;
+        //
+        //            circle.countAngle();
+        //            
+        //            setTimeout(function() {
+        //                circle.x = circle.moveTo.x;
+        //                circle.y = circle.moveTo.y;
+        //                
+        //                render();
+        ////                if (circle.x > circle.moveTo.x) {
+        ////                    circle.x -= Math.sin(Math.PI - circle.moveTo.angle) * speed();
+        ////                } else {
+        ////                    circle.x += Math.sin(Math.PI - circle.moveTo.angle) * speed();
+        ////                }
+        ////
+        ////                if (circle.y > circle.moveTo.y) {
+        ////                    circle.y -= Math.sin(circle.moveTo.angle) * speed();
+        ////                } else {
+        ////                    circle.y += Math.sin(circle.moveTo.angle) * speed();
+        ////                }
+        //            }, 1000);
+
+        //            var length = Math.sqrt(Math.pow(circle.moveTo.x - circle.x, 2) + Math.pow(circle.moveTo.y - circle.y, 2));
+
+
+        //        };
+
+        var keydown = {};
+        var start = {};
+        var isPaused = false;
+        
+
+        onkeydown = onkeyup = (e) => {
+                       console.log(e.keyCode);
+
+            keydown[e.keyCode] = e.type == "keydown";
+        };
+
+        var lastTime = performance.now();
+        var count = 0;
+        requestID = requestAnimationFrame(render);
+        
+    
+        function render(timePassed) {
+            isPaused = false;
+            if(lastTime === 0) {
+                lastTime = timePassed; 
+                var timePerFrame = timePassed - lastTime;
+            }else{
+                var timePerFrame = timePassed - lastTime;
+            }
+            lastTime = timePassed; 
+            
+            
+            
+//            console.log(timePerFrame, timePassed, lastTime);
+            
+            checkControls();
+            start.body = performance.now();
+            //            console.log(performance.now() - timePassed);
+            var speed = function() {
+                return 2;
+            };
+
+
+
+            circle.x += random(-circle.random, circle.random);
+            circle.y += random(-circle.random, circle.random);
+
+            canvas.width = canvas.clientWidth;
+            canvas.height = canvas.clientHeight;
+
+
+
+
+
+
+
+            //            console.log(`${circle.x} -- ${circle.y}`);
+
+            ctx.beginPath();
+            if(circle.x < 0) {
+                circle.x = 0;
+            }
+            if(circle.y < 0) {
+                circle.y = 0;
+            }
+            if(circle.x > canvas.width) {
+                circle.x = canvas.width;
+            }
+            if(circle.y > canvas.height) {
+                circle.y = canvas.height;
+            }
+            ctx.arc(circle.x, circle.y, circle.radius, 0, 2 * Math.PI);
+            ctx.stroke();
+
+
+            ctx.beginPath();
+            ctx.fillStyle = "green";
+            ctx.fillRect(10, 10, 100, 100);
+
+            ctx.fillStyle = "red";
+            ctx.fillRect(200, 100, 50, 50);
+            ctx.fill();
+
+            ctx.fillStyle = "pink";
+            ctx.fillRect(canvas.width - circle.timer / 10 - 20, 20, circle.timer / 10, 20);
+            
+            ctx.font = "19pt Arial";
+            ctx.textAlign = "end";
+            ctx.fillStyle = "red";
+            ctx.fillText((circle.timer / 1000).toFixed(2) + " s", canvas.width - 21, 39);
+            ctx.fill();
+
+
+
+            hitCtx.beginPath();
+            hitCtx.fillStyle = "green";
+            hitCtx.fillRect(10, 10, 100, 100);
+
+            hitCtx.fillStyle = "pink";
+            hitCtx.fillRect(200, 100, 50, 50);
+            hitCtx.fill();
+
+
+            //            console.log(circle.timer);
+            start.bodyLast = performance.now() - start.body;
+            start.animframe = performance.now();
+            requestID = requestAnimationFrame(render);
+
+            function checkControls() {
+
+                if (keydown[87]) {
+                    circle.y -= 20;
+                }
+                if (keydown[83]) {
+                    circle.y += 20;
+                }
+                if (keydown[68]) {
+                    circle.x += 20;
+                }
+                if (keydown[65]) {
+                    circle.x -= 20;
+                }
+                if (keydown[32]) {
+                    if (circle.timer <= 0) {
+                        // console.log(performance.now() - circle.timerStart, count);
+                        circle.timer = 0;
+                        circle.biggerRadius();
+                        circle.resetTimer();
+                        circle.biggerRadius();
+                        circle.resetTimer();
+                        return;
+                    }
+
+                    if (!circle.timerStart) {
+                        circle.setTimer();
+                    }
+
+
+                    circle.smallerRadius();
+                    var perfnow = performance.now();
+                    count ++;
+                                        // console.log(circle.step + timePerFrame, circle.timer, perfnow - circle.timerStart - circle.step, timePerFrame);
+                    circle.timer -= timePerFrame;
+                    if(circle.timer < 0) {
+                        circle.timer = 0;
+                    }
+//                    circle.timer -= perfnow - circle.timerStart - circle.step;
+                    circle.step = perfnow - circle.timerStart;
+
+                }else{
+                    circle.biggerRadius();
+                }
+            }
+        }
+
+        function random(min, max) {
+            return Math.random() * (max - min + 1) + min;
+        }
+        
+        function pause() {
+            if(isPaused) {
+                return;
+            }
+            isPaused = true;
+            
+            keydown = {};
+            
+            cancelAnimationFrame(requestID);
+            ctx.globalAlpha = 0.4;
+            ctx.fillStyle = "white";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1.0;
+            ctx.fill();
+            
+            ctx.font = "60pt Arial";
+            ctx.textAlign = "center";
+            ctx.fillStyle = "red";
+            ctx.fillText("PRESS enter TO CONTINUE", canvas.width / 2, canvas.height / 2);
+            ctx.fill();
+        }
+    </script>
+</body>
+
+</html>

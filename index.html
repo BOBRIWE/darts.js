@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>Darts.js</title>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body id="wrapper">
+    <div class="wrapper" ></div>
+
+    <canvas id="canvas">
+            Your browser doesn't support canvas!
+        </canvas>
+
+
+    <script src="js/darts.js"></script>
+
+    <script>
+        // delete window.requestAnimationFrame;
+        // delete window.cancelAnimationFrame;
+    
+        var darts = new Darts(document.getElementById("canvas"));
+        
+        darts.init(darts.renderStartScene);
+    
+    
+        
+        
+        // var darts = new Darts(document.getElementById("canvas"));
+        // 
+        // onkeydown = (e) => {
+        //     if(e.keyCode == 13) {
+        //         darts.cancelFrame();
+        //     }
+        // };
+        // 
+        // darts.requestFrame(function(time) {
+        //     console.log(time);
+        // });
+        // setInterval(function() {
+        //     console.log("---", 2000);
+        // }, 2000);
+    </script>
+</body>
+
+</html>
