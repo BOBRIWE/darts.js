@@ -15,11 +15,12 @@ class Darts {
         this._hitCanvas = document.createElement("canvas");
         this._hitCtx = this._hitCanvas.getContext("2d");
         
-        // document.getElementById("wrapper").appendChild(this._hitCanvas);
+        document.getElementById("wrapper").appendChild(this._hitCanvas);
         
         this._ispaused = false;
         this.hitcolors = {};
         this.lastFired = "";
+        this.shootHandler = [];
         
         this._canvas.width = this._canvas.clientWidth;
         this._canvas.height = this._canvas.clientHeight;
@@ -82,6 +83,7 @@ class Darts {
         window.addEventListener('resume', function() {
             window.setTimeout(function() {
                 self.keyboardmap = {};
+                self.shootHandler = [];
                 
                 self.cancelFrame();
                 self.init(function(t) {
@@ -296,6 +298,18 @@ class Darts {
 
         ctx.fill();
 
+        for(let i = 0; i < this.shootHandler.length; i++) {
+            ctx.beginPath();
+            ctx.strokeStyle = "#ffd700";
+            
+            ctx.moveTo(this.shootHandler[i].x - 10, this.shootHandler[i].y + 10);
+            ctx.lineTo(this.shootHandler[i].x + 10, this.shootHandler[i].y - 10);
+
+            ctx.moveTo(this.shootHandler[i].x - 10, this.shootHandler[i].y - 10);
+            ctx.lineTo(this.shootHandler[i].x + 10, this.shootHandler[i].y + 10);
+            ctx.lineWidth = 3.0;
+            ctx.stroke();
+        }
         
         
         function renderDarts() {
@@ -442,6 +456,7 @@ class Darts {
                 
                 ctx.beginPath();
                 
+                
                 while(true) {
                     let c = randColor();
                     if(!self.hitcolors[c]) {
@@ -568,6 +583,7 @@ class Darts {
             ctx.strokeStyle = color;
             ctx.arc(canvas.width/2, canvas.height/2, 15/2 * m, 0, 2*Math.PI);
             
+            ctx.lineWidth = 1.0;
             ctx.fill();
             ctx.stroke();
             
@@ -690,6 +706,10 @@ class Darts {
             player.shoots--;
             player.score = getScore();
             
+            self.shootHandler.push({
+                x: self.circle.x,
+                y: self.circle.y
+            });
             self.circle.x = self._canvas.width / 2;
             self.circle.y = self._canvas.height / 2;
         }
