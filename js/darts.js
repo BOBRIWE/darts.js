@@ -15,7 +15,7 @@ class Darts {
         this._hitCanvas = document.createElement("canvas");
         this._hitCtx = this._hitCanvas.getContext("2d");
         
-        document.getElementById("wrapper").appendChild(this._hitCanvas);
+        // document.getElementById("wrapper").appendChild(this._hitCanvas);
         
         this._ispaused = false;
         this.hitcolors = {};
